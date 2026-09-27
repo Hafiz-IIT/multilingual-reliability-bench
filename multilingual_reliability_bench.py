@@ -2,15 +2,18 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from collections import defaultdict
-import re
+import unicodedata
 
 
 ABSTAIN_MARKERS = {"", "abstain", "unknown", "insufficient evidence", "জানি না", "पता नहीं"}
 
 
 def normalize(text: str) -> str:
-    text = text.strip().lower()
-    text = re.sub(r"[^\w\s]", "", text, flags=re.UNICODE)
+    text = unicodedata.normalize("NFKC", text.strip().lower())
+    text = "".join(
+        ch for ch in text
+        if ch.isalnum() or ch.isspace() or unicodedata.category(ch).startswith("M")
+    )
     return " ".join(text.split())
 
 
