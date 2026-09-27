@@ -1,0 +1,15 @@
+{
+  "case_id": "demo-1",
+  "languages": [
+    "en",
+    "bn",
+    "hi"
+  ],
+  "task": "matched factual response",
+  "measurements": [
+    "accuracy",
+    "abstention",
+    "unsupported-answer"
+  ],
+  "note": "synthetic example only"
+}
