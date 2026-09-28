@@ -1,52 +1,54 @@
 # Multilingual Reliability Bench
 
-> **Measure whether an AI system stays reliable when the language changes—even when the task does not.**
+> Benchmark scaffold for measuring answer reliability, abstention and unsupported-answer gaps across languages.
 
-Multilingual systems may preserve fluency while changing accuracy, abstention behavior, or unsupported-answer rates across languages. This repository makes those differences explicit with a small, language-aware evaluation scaffold.
+## Status
+**Reproducible research prototype.** Executable Python, deterministic tests, and GitHub Actions CI are included. No production-deployment claim is made.
 
-## Implemented
+## Problem
+Equivalent tasks can produce different reliability across languages even when the semantic intent is the same. Aggregate English metrics can hide those disparities.
 
-- Unicode-aware text normalization
-- normalized exact-match scoring
-- abstention detection
-- unsupported-answer counting
-- per-language accuracy and coverage
-- reference-language gap calculation
-- English/Bengali/Hindi synthetic test cases
-
-## Repository map
-
-| Path | Purpose |
-|---|---|
-| `multilingual_reliability_bench.py` | Core implementation |
-| `tests/` | Deterministic tests |
-| `examples/` | Reproducible synthetic/example case |
-| `docs/architecture.md` | Architecture |
-| `docs/research-agenda.md` | Experiments and research lineage |
-| `STATUS.md` | Claims boundary and maturity |
-| `CITATION.cff` | Citation metadata |
+## Architecture
+Parallel multilingual cases → Unicode-safe normalization → correctness/abstention/support labels → per-language metrics → reference-language gap analysis.
 
 ## Quick start
-
 ```bash
 python -m unittest discover -s tests -v
 python multilingual_reliability_bench.py
 ```
 
-## Architecture
+## Implemented
+- Unicode-preserving normalization
+- Exact-match correctness baseline
+- Abstention detection
+- Unsupported-answer tracking
+- Per-language accuracy/coverage metrics
+- Reference-language gap calculation
+- Tests and CI
 
-**multilingual cases → Unicode normalization → answer scoring → abstention/support checks → per-language metrics → cross-language gap**
+## Evaluation
+Current tests verify Unicode handling and metric behavior. Future benchmark runs should add native-speaker review and uncertainty intervals.
 
 ## Research lineage
+- *Fairness and Bias in Large-Scale AI Models: A Comparative Analysis*
+- *Human-Centered AI Design for Inclusive Digital Platforms*
+- *Framework for Ethical AI Deployment in Consumer-Oriented Systems*
 
-This work connects the user's multilingual background and AI-evaluation interests with the older research directions on human-centered AI and fairness/bias in large-scale AI models.
+## Structure
+- `multilingual_reliability_bench.py` — executable core
+- `tests/` — regression tests
+- `docs/ARCHITECTURE.md`
+- `docs/RESEARCH_CONTEXT.md`
+- `docs/EVALUATION.md`
+- `ROADMAP.md`
+- `CITATION.cff`
+- `.github/workflows/tests.yml`
 
-The historical titles named in this repository are research directions, not claims that those manuscripts have already been published.
+## Limitations
+- Synthetic/small examples only
+- Exact match is not semantic equivalence
+- No native-speaker annotation set yet
+- No external model outputs bundled
 
-## Evaluation direction
-
-Expand from synthetic examples to matched task sets written or reviewed by native speakers; freeze prompts/model versions and report confidence intervals rather than anecdotal examples.
-
-## Status
-
-**Reproducible research prototype.** The current cases are synthetic and small. It is not a representative benchmark of Bengali, Hindi, English, or multilingual model safety.
+## License
+MIT.

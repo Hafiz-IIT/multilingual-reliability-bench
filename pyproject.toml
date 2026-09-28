@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "multilingual-reliability-bench"
+version = "0.1.0"
+description = "Benchmark scaffold for measuring answer reliability, abstention and unsupported-answer gaps across languages."
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "Syed Hafiz Ali"}]
+
+[tool.setuptools]
+py-modules = ["multilingual_reliability_bench"]
