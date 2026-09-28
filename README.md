@@ -52,3 +52,8 @@ Current tests verify Unicode handling and metric behavior. Future benchmark runs
 
 ## License
 MIT.
+
+## Extended implementation
+
+- `paired_benchmark.py` — paired multilingual cases with measurable accuracy/coverage disparity ranges.
+- `tests/test_paired_benchmark.py` — parallel-case integrity and disparity tests.
