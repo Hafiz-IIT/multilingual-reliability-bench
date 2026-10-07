@@ -1,59 +1,57 @@
 # Multilingual Reliability Bench
 
-> Benchmark scaffold for measuring answer reliability, abstention and unsupported-answer gaps across languages.
+<p align="center">
+  <strong>Measuring Reliability Gaps Across Languages</strong><br/>
+  <sub>Paired evaluation for correctness, abstention and unsupported answers.</sub>
+</p>
 
-## Status
-**Reproducible research prototype.** Executable Python, deterministic tests, and GitHub Actions CI are included. No production-deployment claim is made.
+<p align="center">
+  <a href="https://github.com/Hafiz-IIT/multilingual-reliability-bench/actions"><img src="https://img.shields.io/github/actions/workflow/status/Hafiz-IIT/multilingual-reliability-bench/ci.yml?label=CI" alt="CI"/></a>
+  <img src="https://img.shields.io/badge/status-research%20prototype-blue" alt="Research prototype"/>
+  <img src="https://img.shields.io/badge/evaluation-paired%20cases-orange" alt="Paired evaluation"/>
+</p>
 
-## Problem
-Equivalent tasks can produce different reliability across languages even when the semantic intent is the same. Aggregate English metrics can hide those disparities.
+## Research question
 
-## Architecture
-Parallel multilingual cases → Unicode-safe normalization → correctness/abstention/support labels → per-language metrics → reference-language gap analysis.
+**Does a model behave equally reliably when the same semantic task is expressed in different languages?**
 
-## Quick start
-```bash
-python -m unittest discover -s tests -v
-python multilingual_reliability_bench.py
+The benchmark is deliberately paired: the comparison is between equivalent task intent, not unrelated test sets.
+
+## Evaluation pipeline
+
+```
+Paired cases
+   ↓
+Unicode-safe normalization
+   ↓
+Correct / abstain / unsupported labels
+   ↓
+Per-language metrics
+   ↓
+Reference-language gap analysis
 ```
 
+## Try it
+
+```bash
+python multilingual_reliability_bench.py
+python -m unittest discover -s tests -v
+```
+
+`paired_benchmark.py` provides deterministic paired cases and exposes measurable disparity rather than hiding it inside an aggregate score.
+
 ## Implemented
+
 - Unicode-preserving normalization
-- Exact-match correctness baseline
-- Abstention detection
-- Unsupported-answer tracking
-- Per-language accuracy/coverage metrics
-- Reference-language gap calculation
-- Tests and CI
+- exact-match baseline
+- abstention detection
+- unsupported-answer tracking
+- per-language metrics
+- paired disparity analysis
+- deterministic CI
 
-## Evaluation
-Current tests verify Unicode handling and metric behavior. Future benchmark runs should add native-speaker review and uncertainty intervals.
+## Research boundary
 
-## Research lineage
-- *Fairness and Bias in Large-Scale AI Models: A Comparative Analysis*
-- *Human-Centered AI Design for Inclusive Digital Platforms*
-- *Framework for Ethical AI Deployment in Consumer-Oriented Systems*
+The included dataset is a benchmark scaffold, not a claim of comprehensive multilingual coverage or model-wide generalization.
 
-## Structure
-- `multilingual_reliability_bench.py` — executable core
-- `tests/` — regression tests
-- `docs/ARCHITECTURE.md`
-- `docs/RESEARCH_CONTEXT.md`
-- `docs/EVALUATION.md`
-- `ROADMAP.md`
-- `CITATION.cff`
-- `.github/workflows/tests.yml`
-
-## Limitations
-- Synthetic/small examples only
-- Exact match is not semantic equivalence
-- No native-speaker annotation set yet
-- No external model outputs bundled
-
-## License
-MIT.
-
-## Extended implementation
-
-- `paired_benchmark.py` — paired multilingual cases with measurable accuracy/coverage disparity ranges.
-- `tests/test_paired_benchmark.py` — parallel-case integrity and disparity tests.
+Related work: [Agent Evidence Probes](https://github.com/Hafiz-IIT/agent-evidence-probes) · [Secure Document RAG Agent](https://github.com/Hafiz-IIT/secure-doc-rag-agent)
