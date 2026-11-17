@@ -9,9 +9,14 @@ class ParallelCase:
     case_id: str
     expected_by_language: dict[str, str]
     response_by_language: dict[str, str]
+    supported_by_language: dict[str, bool] | None = None
 
     def flatten(self) -> list[Case]:
         languages = set(self.expected_by_language) | set(self.response_by_language)
+        if self.supported_by_language is not None and set(self.supported_by_language) - languages:
+            raise ValueError("support flags reference languages absent from the parallel case")
+        if self.supported_by_language is not None and any(not isinstance(v, bool) for v in self.supported_by_language.values()):
+            raise ValueError("language support flags must be booleans")
         rows: list[Case] = []
         for language in sorted(languages):
             if language not in self.expected_by_language or language not in self.response_by_language:
@@ -22,6 +27,7 @@ class ParallelCase:
                     language,
                     self.expected_by_language[language],
                     self.response_by_language[language],
+                    supported=(self.supported_by_language or {}).get(language, True),
                 )
             )
         return rows
