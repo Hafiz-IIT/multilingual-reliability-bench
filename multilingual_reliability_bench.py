@@ -33,14 +33,16 @@ class Metrics:
     correct: int
     abstained: int
     unsupported: int
+    supported_total: int
+    unsupported_non_abstain: int
 
     @property
     def accuracy(self) -> float:
-        return self.correct / self.total if self.total else 0.0
+        return self.correct / self.supported_total if self.supported_total else 0.0
 
     @property
     def coverage(self) -> float:
-        return (self.total - self.abstained) / self.total if self.total else 0.0
+        return (self.supported_total - self.abstained) / self.supported_total if self.supported_total else 0.0
 
 
 def is_abstention(text: str) -> bool:
@@ -48,16 +50,25 @@ def is_abstention(text: str) -> bool:
 
 
 def evaluate(cases: list[Case]) -> dict[str, Metrics]:
-    buckets = defaultdict(lambda: {"total": 0, "correct": 0, "abstained": 0, "unsupported": 0})
+    buckets = defaultdict(lambda: {
+        "total": 0, "correct": 0, "abstained": 0, "unsupported": 0,
+        "supported_total": 0, "unsupported_non_abstain": 0,
+    })
     for case in cases:
         b = buckets[case.language]
         b["total"] += 1
+        if not case.supported:
+            b["unsupported"] += 1
+            if not is_abstention(case.response):
+                b["unsupported_non_abstain"] += 1
+            # Unsupported language/model combinations are reported separately;
+            # they must not inflate or depress supported-language accuracy.
+            continue
+        b["supported_total"] += 1
         if is_abstention(case.response):
             b["abstained"] += 1
         elif normalize(case.response) == normalize(case.expected):
             b["correct"] += 1
-        if not case.supported and not is_abstention(case.response):
-            b["unsupported"] += 1
 
     return {
         lang: Metrics(lang, **values)
