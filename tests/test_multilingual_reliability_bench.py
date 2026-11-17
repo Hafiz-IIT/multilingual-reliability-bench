@@ -18,6 +18,21 @@ class MultilingualBenchTests(unittest.TestCase):
         self.assertEqual(metrics["en"].correct, 1)
         self.assertEqual(metrics["en"].abstained, 1)
         self.assertEqual(metrics["bn"].unsupported, 1)
+        self.assertEqual(metrics["bn"].supported_total, 1)
+        self.assertEqual(metrics["bn"].accuracy, 1.0)
+        self.assertEqual(metrics["bn"].unsupported_non_abstain, 1)
+
+    def test_unsupported_correct_answer_does_not_inflate_supported_accuracy(self):
+        cases = [
+            Case("1", "bn", "হ্যাঁ", "ভুল", supported=True),
+            Case("2", "bn", "না", "না", supported=False),
+        ]
+        metrics = evaluate(cases)["bn"]
+        self.assertEqual(metrics.total, 2)
+        self.assertEqual(metrics.supported_total, 1)
+        self.assertEqual(metrics.correct, 0)
+        self.assertEqual(metrics.accuracy, 0.0)
+        self.assertEqual(metrics.unsupported_non_abstain, 1)
 
     def test_gap(self):
         cases = [
