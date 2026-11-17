@@ -20,6 +20,17 @@ class PairedBenchmarkTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             case.flatten()
 
+    def test_support_flags_are_propagated(self):
+        result = evaluate_parallel([
+            ParallelCase(
+                "x", {"en": "yes", "bn": "হ্যাঁ"},
+                {"en": "yes", "bn": "হ্যাঁ"},
+                supported_by_language={"en": True, "bn": False},
+            )
+        ])
+        self.assertEqual(result["metrics"]["bn"].unsupported, 1)
+        self.assertEqual(result["metrics"]["bn"].supported_total, 0)
+
 
 if __name__ == "__main__":
     unittest.main()
