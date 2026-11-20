@@ -34,6 +34,15 @@ class MultilingualBenchTests(unittest.TestCase):
         self.assertEqual(metrics.accuracy, 0.0)
         self.assertEqual(metrics.unsupported_non_abstain, 1)
 
+    def test_duplicate_case_language_pairs_rejected(self):
+        cases = [Case("same", "en", "yes", "yes"), Case("same", "en", "no", "no")]
+        with self.assertRaises(ValueError):
+            evaluate(cases)
+
+    def test_unsupported_only_language_excluded_from_gap(self):
+        cases = [Case("1", "en", "yes", "yes"), Case("2", "xx", "yes", "no", supported=False)]
+        self.assertEqual(accuracy_gap(evaluate(cases)), {})
+
     def test_gap(self):
         cases = [
             Case("1", "en", "a", "a"),
