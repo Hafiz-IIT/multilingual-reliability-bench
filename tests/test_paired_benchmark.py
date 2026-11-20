@@ -15,6 +15,14 @@ class PairedBenchmarkTests(unittest.TestCase):
         self.assertEqual(result["accuracy_range"], 1.0)
         self.assertEqual(result["coverage_range"], 1.0)
 
+    def test_duplicate_parallel_case_ids_rejected(self):
+        rows = [
+            ParallelCase("same", {"en": "yes"}, {"en": "yes"}),
+            ParallelCase("same", {"en": "no"}, {"en": "no"}),
+        ]
+        with self.assertRaises(ValueError):
+            evaluate_parallel(rows)
+
     def test_incomplete_parallel_case_raises(self):
         case = ParallelCase("x", {"en": "a", "bn": "ক"}, {"en": "a"})
         with self.assertRaises(ValueError):
