@@ -43,6 +43,11 @@ class PairedBenchmarkTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             case.flatten()
 
+    def test_empty_parallel_case_is_rejected(self):
+        case = ParallelCase("empty", {}, {})
+        with self.assertRaises(ValueError):
+            case.flatten()
+
     def test_support_flags_are_propagated(self):
         result = evaluate_parallel([
             ParallelCase(
