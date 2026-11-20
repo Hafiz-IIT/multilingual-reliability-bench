@@ -23,6 +23,21 @@ class PairedBenchmarkTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             evaluate_parallel(rows)
 
+    def test_support_flag_mapping_type_is_validated(self):
+        case = ParallelCase(
+            "x", {"en": "yes"}, {"en": "yes"}, supported_by_language=[("en", True)]
+        )
+        with self.assertRaises(ValueError):
+            case.flatten()
+
+    def test_parallel_case_ids_are_trimmed_before_duplicate_check(self):
+        rows = [
+            ParallelCase(" same ", {"en": "yes"}, {"en": "yes"}),
+            ParallelCase("same", {"en": "no"}, {"en": "no"}),
+        ]
+        with self.assertRaises(ValueError):
+            evaluate_parallel(rows)
+
     def test_incomplete_parallel_case_raises(self):
         case = ParallelCase("x", {"en": "a", "bn": "ক"}, {"en": "a"})
         with self.assertRaises(ValueError):
