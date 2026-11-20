@@ -25,6 +25,8 @@ class ParallelCase:
             if any(not isinstance(language, str) or not language.strip() for language in mapping):
                 raise ValueError("language keys must be non-empty strings")
         languages = set(self.expected_by_language) | set(self.response_by_language)
+        if not languages:
+            raise ValueError("parallel cases must contain at least one language")
         if self.supported_by_language is not None:
             if not isinstance(self.supported_by_language, dict):
                 raise ValueError("supported_by_language must be a dictionary")
