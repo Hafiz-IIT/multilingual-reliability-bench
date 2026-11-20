@@ -34,6 +34,28 @@ class MultilingualBenchTests(unittest.TestCase):
         self.assertEqual(metrics.accuracy, 0.0)
         self.assertEqual(metrics.unsupported_non_abstain, 1)
 
+    def test_unsupported_only_accuracy_is_undefined(self):
+        metric = evaluate([
+            Case("1", "xx", "answer", "answer", supported=False)
+        ])["xx"]
+        self.assertIsNone(metric.accuracy)
+        self.assertIsNone(metric.coverage)
+        self.assertEqual(metric.unsupported_non_abstain, 1)
+
+    def test_empty_gold_answer_is_rejected(self):
+        for expected in ("", "   ", "---"):
+            with self.subTest(expected=expected):
+                with self.assertRaises(ValueError):
+                    Case("1", "en", expected, expected)
+
+    def test_case_id_and_language_are_canonicalized_before_duplicate_check(self):
+        cases = [
+            Case(" same ", "EN", "yes", "yes"),
+            Case("same", "en", "no", "no"),
+        ]
+        with self.assertRaises(ValueError):
+            evaluate(cases)
+
     def test_duplicate_case_language_pairs_rejected(self):
         cases = [Case("same", "en", "yes", "yes"), Case("same", "en", "no", "no")]
         with self.assertRaises(ValueError):
