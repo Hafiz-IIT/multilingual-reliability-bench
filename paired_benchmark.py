@@ -12,6 +12,10 @@ class ParallelCase:
     supported_by_language: dict[str, bool] | None = None
 
     def flatten(self) -> list[Case]:
+        if not isinstance(self.case_id, str) or not self.case_id.strip():
+            raise ValueError("case_id must be non-empty")
+        if not isinstance(self.expected_by_language, dict) or not isinstance(self.response_by_language, dict):
+            raise ValueError("parallel expected/response values must be dictionaries")
         languages = set(self.expected_by_language) | set(self.response_by_language)
         if self.supported_by_language is not None and set(self.supported_by_language) - languages:
             raise ValueError("support flags reference languages absent from the parallel case")
@@ -34,10 +38,16 @@ class ParallelCase:
 
 
 def evaluate_parallel(cases: list[ParallelCase]) -> dict:
+    if not isinstance(cases, list) or any(not isinstance(case, ParallelCase) for case in cases):
+        raise ValueError("cases must be a list of ParallelCase values")
+    ids = [case.case_id for case in cases]
+    if len(ids) != len(set(ids)):
+        raise ValueError("parallel case IDs must be unique")
     flat = [row for case in cases for row in case.flatten()]
     metrics = evaluate(flat)
-    accuracies = [m.accuracy for m in metrics.values()]
-    coverages = [m.coverage for m in metrics.values()]
+    supported = [m for m in metrics.values() if m.supported_total > 0]
+    accuracies = [m.accuracy for m in supported]
+    coverages = [m.coverage for m in supported]
     return {
         "metrics": metrics,
         "accuracy_range": max(accuracies) - min(accuracies) if accuracies else 0.0,
