@@ -34,8 +34,12 @@ class Case:
             raise ValueError("language must be non-empty")
         if not isinstance(self.expected, str) or not isinstance(self.response, str):
             raise ValueError("expected and response must be strings")
+        if not normalize(self.expected):
+            raise ValueError("expected answer must contain non-whitespace, non-punctuation content")
         if not isinstance(self.supported, bool):
             raise ValueError("supported must be boolean")
+        object.__setattr__(self, "case_id", self.case_id.strip())
+        object.__setattr__(self, "language", self.language.strip().casefold())
 
 
 @dataclass(frozen=True)
@@ -49,12 +53,12 @@ class Metrics:
     unsupported_non_abstain: int
 
     @property
-    def accuracy(self) -> float:
-        return self.correct / self.supported_total if self.supported_total else 0.0
+    def accuracy(self) -> float | None:
+        return self.correct / self.supported_total if self.supported_total else None
 
     @property
-    def coverage(self) -> float:
-        return (self.supported_total - self.abstained) / self.supported_total if self.supported_total else 0.0
+    def coverage(self) -> float | None:
+        return (self.supported_total - self.abstained) / self.supported_total if self.supported_total else None
 
 
 def is_abstention(text: str) -> bool:
