@@ -32,14 +32,13 @@ class PairedBenchmarkTests(unittest.TestCase):
         self.assertEqual(result["unsupported_overanswer_rate_range"], 1.0)
 
     def test_incomplete_parallel_case_raises(self):
-        case = ParallelCase(
-            "x",
-            {"en": "prompt", "bn": "প্রশ্ন"},
-            {"en": "a", "bn": "ক"},
-            {"en": "a"},
-        )
         with self.assertRaises(ValueError):
-            case.flatten()
+            ParallelCase(
+                "x",
+                {"en": "prompt", "bn": "প্রশ্ন"},
+                {"en": "a", "bn": "ক"},
+                {"en": "a"},
+            )
 
     def test_duplicate_parallel_case_ids_rejected(self):
         case = ParallelCase("x", {"en": "q"}, {"en": "a"}, {"en": "a"})
