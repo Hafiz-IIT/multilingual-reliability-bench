@@ -46,7 +46,7 @@ class ParallelCase:
         object.__setattr__(self, "expected_by_language", MappingProxyType(dict(self.expected_by_language)))
         object.__setattr__(self, "response_by_language", MappingProxyType(dict(self.response_by_language)))
         object.__setattr__(self, "supported_by_language", MappingProxyType(dict(self.supported_by_language)))
-        object.__setattr__(self, "expected_refusal_by_language", MappingProxyType(dict(self.expected_refusal_by_language))
+        object.__setattr__(self, "expected_refusal_by_language", MappingProxyType(dict(self.expected_refusal_by_language)))
 
     def flatten(self) -> list[tuple[PromptCase, str]]:
         rows = []
