@@ -27,6 +27,12 @@ class MultilingualBenchTests(unittest.TestCase):
         self.assertFalse(bad.correct)
         self.assertTrue(bad.over_answered_unsupported)
 
+    def test_bengali_and_hindi_abstentions_are_detected(self):
+        bn = PromptCase("bn", "Q-bn", "অজানা প্রশ্ন", "", supported=False)
+        hi = PromptCase("hi-IN", "Q-hi", "अज्ञात प्रश्न", "", supported=False)
+        self.assertTrue(evaluate(bn, "যথেষ্ট তথ্য নেই।").correct)
+        self.assertTrue(evaluate(hi, "मुझे नहीं पता।").correct)
+
     def test_expected_refusal_requires_abstention(self):
         case = PromptCase("hi", "Q3", "unknown", "", supported=True, expected_refusal=True)
         self.assertTrue(evaluate(case, "I cannot determine that.").correct)
