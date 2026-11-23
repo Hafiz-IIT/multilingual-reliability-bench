@@ -1,22 +1,21 @@
 # Status
 
 ## Implemented
-- Unicode-aware text normalization
-- normalized exact-match scoring
-- abstention detection
-- unsupported-answer counting
-- per-language accuracy and coverage
-- reference-language gap calculation
-- English/Bengali/Hindi synthetic test cases
-- Unit tests and GitHub Actions CI.
-- Example fixture and documentation.
+- paired multilingual prompt-case schema with explicit supported/unsupported and expected-refusal labels
+- exact-match scoring for supported answerable cases
+- explicit abstention scoring for unsupported and refusal-required cases
+- separate unsupported over-answer and unnecessary-abstention metrics
+- per-language coverage and abstention summaries
+- duplicate case-key validation and deterministic result ordering
+- parallel client adapter with input validation
+- regression tests + GitHub Actions CI
 
-## Not yet claimed / research stage
-- representative language coverage
-- native-speaker validation corpus
-- model leaderboard
-- statistical significance claims
-- semantic-equivalence certification
+## Evaluation boundary
+Abstention detection is a transparent phrase heuristic, and supported-answer scoring is exact-match only. These metrics are a benchmark scaffold, not semantic equivalence evaluation, calibrated reliability, or evidence of model parity across languages.
 
-## Claims boundary
-The current cases are synthetic and small. It is not a representative benchmark of Bengali, Hindi, English, or multilingual model safety.
+## Not claimed
+- measured Bengali/Hindi/English capability parity
+- human-validated translation or semantic labels
+- broad cultural or dialect coverage
+- production model reliability
+- causal explanation for cross-language performance gaps
