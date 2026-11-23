@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from types import MappingProxyType
 from typing import Mapping
 
 from multilingual_reliability_bench import PromptCase, evaluate, score_by_language
@@ -25,6 +26,25 @@ class ParallelCase:
             raise ValueError("supported_by_language must cover every language")
         if self.expected_refusal_by_language and set(self.expected_refusal_by_language) != keys:
             raise ValueError("expected_refusal_by_language must cover every language")
+        for language in keys:
+            for mapping, name in (
+                (self.prompt_by_language, "prompt"),
+                (self.expected_by_language, "expected"),
+                (self.response_by_language, "response"),
+            ):
+                if not isinstance(mapping[language], str):
+                    raise ValueError(f"{name} for {language} must be a string")
+                if name != "expected" and not mapping[language].strip():
+                    raise ValueError(f"{name} for {language} must be non-empty")
+            if self.supported_by_language and type(self.supported_by_language[language]) is not bool:
+                raise ValueError("supported_by_language values must be booleans")
+            if self.expected_refusal_by_language and type(self.expected_refusal_by_language[language]) is not bool:
+                raise ValueError("expected_refusal_by_language values must be booleans")
+        object.__setattr__(self, "prompt_by_language", MappingProxyType(dict(self.prompt_by_language)))
+        object.__setattr__(self, "expected_by_language", MappingProxyType(dict(self.expected_by_language)))
+        object.__setattr__(self, "response_by_language", MappingProxyType(dict(self.response_by_language)))
+        object.__setattr__(self, "supported_by_language", MappingProxyType(dict(self.supported_by_language)))
+        object.__setattr__(self, "expected_refusal_by_language", MappingProxyType(dict(self.expected_refusal_by_language))
 
     def flatten(self) -> list[tuple[PromptCase, str]]:
         rows = []
@@ -47,6 +67,8 @@ class ParallelCase:
 
 
 def evaluate_parallel(cases: list[ParallelCase]) -> dict:
+    if not isinstance(cases, (list, tuple)):
+        raise TypeError("cases must be a list or tuple")
     if any(not isinstance(case, ParallelCase) for case in cases):
         raise TypeError("cases must contain only ParallelCase instances")
     ids = [case.case_id for case in cases]
