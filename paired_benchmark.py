@@ -20,7 +20,9 @@ class ParallelCase:
         if not isinstance(self.case_id, str) or not self.case_id.strip():
             raise ValueError("case_id must be a non-empty string")
         keys = set(self.prompt_by_language)
-        if not keys or keys != set(self.expected_by_language) or keys != set(self.response_by_language):
+        if not keys or any(not isinstance(language, str) or not language.strip() for language in keys):
+            raise ValueError("language keys must be non-empty strings")
+        if keys != set(self.expected_by_language) or keys != set(self.response_by_language):
             raise ValueError("prompt, expected and response mappings must contain the same non-empty languages")
         if self.supported_by_language and set(self.supported_by_language) != keys:
             raise ValueError("supported_by_language must cover every language")
