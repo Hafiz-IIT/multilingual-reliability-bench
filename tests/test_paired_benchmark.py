@@ -40,6 +40,25 @@ class PairedBenchmarkTests(unittest.TestCase):
                 {"en": "a"},
             )
 
+    def test_parallel_case_mappings_are_immutable_and_labels_typed(self):
+        case = ParallelCase(
+            "immutable",
+            {"en": "question"},
+            {"en": "answer"},
+            {"en": "answer"},
+            supported_by_language={"en": True},
+        )
+        with self.assertRaises(TypeError):
+            case.prompt_by_language["en"] = "mutated"
+        with self.assertRaises(ValueError):
+            ParallelCase(
+                "bad-label",
+                {"en": "question"},
+                {"en": "answer"},
+                {"en": "answer"},
+                supported_by_language={"en": 1},
+            )
+
     def test_duplicate_parallel_case_ids_rejected(self):
         case = ParallelCase("x", {"en": "q"}, {"en": "a"}, {"en": "a"})
         with self.assertRaisesRegex(ValueError, "duplicate"):
