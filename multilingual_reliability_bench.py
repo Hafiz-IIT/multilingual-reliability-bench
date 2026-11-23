@@ -57,17 +57,50 @@ class EvalResult:
     response: str
 
 
-def is_abstention(response: str) -> bool:
+LANGUAGE_ABSTENTION_MARKERS = {
+    "bn": (
+        "যথেষ্ট তথ্য নেই",
+        "আমার কাছে যথেষ্ট তথ্য নেই",
+        "আমি জানি না",
+        "নির্ধারণ করতে পারি না",
+        "যাচাই করতে পারি না",
+        "উত্তর দিতে পারি না",
+    ),
+    "hi": (
+        "पर्याप्त जानकारी नहीं",
+        "मेरे पास पर्याप्त जानकारी नहीं",
+        "मुझे नहीं पता",
+        "निर्धारित नहीं कर सकता",
+        "निर्धारित नहीं कर सकती",
+        "सत्यापित नहीं कर सकता",
+        "सत्यापित नहीं कर सकती",
+        "उत्तर नहीं दे सकता",
+        "उत्तर नहीं दे सकती",
+    ),
+    "ur": (
+        "کافی معلومات نہیں",
+        "مجھے معلوم نہیں",
+        "تصدیق نہیں کر سکتا",
+        "جواب نہیں دے سکتا",
+    ),
+}
+
+
+def is_abstention(response: str, language: str | None = None) -> bool:
     if not isinstance(response, str) or not response.strip():
         raise ValueError("response must be a non-empty string")
     normalized = response.casefold()
-    return any(marker in normalized for marker in ABSTENTION_MARKERS)
+    markers = list(ABSTENTION_MARKERS)
+    if isinstance(language, str):
+        base_language = language.split("-", 1)[0].casefold()
+        markers.extend(LANGUAGE_ABSTENTION_MARKERS.get(base_language, ()))
+    return any(marker in normalized for marker in markers)
 
 
 def evaluate(case: PromptCase, response: str) -> EvalResult:
     if not isinstance(case, PromptCase):
         raise TypeError("case must be a PromptCase")
-    abstained = is_abstention(response)
+    abstained = is_abstention(response, case.language)
     expected_abstention = case.expected_refusal or not case.supported
     if expected_abstention:
         correct = abstained
